@@ -65,10 +65,12 @@ distances <- findDistances(1, y, n)
 print("Quantile Values:", quote=F)
 print(quantile(distances))
 # mean and variance
+popMean <- mean(distances)
+popVar <- var(distances) * ((n - 1) / n) # needs adjusting
 print("Population mean:", quote=F)
-print(mean(distances))
+print(popMean)
 print("Population variance:", quote=F)
-print(var(distances) * ((n - 1) / n))  # sample variance by default
+print(popVar)
 
 # Step 2: Randomly Do X experiments of size N, record the sample mean and var
 
@@ -90,15 +92,31 @@ randomSample <- function(Nne, Nss) {
         means <- c(means, mean(result))
         vars <- c(vars, var(result))
     } # all samples
-    print("Sample mean", quote=F)
-    print(mean(means))
-    print("Sample variance:", quote=F)
-    print(mean(vars))
+    #print("Sample mean", quote=F)
+    #print(mean(means))
+    #png("./samplemeans4.png")
+    #plot(density(means), main="Distribution of Sample Means", xlab="Mean", ylab="Density")
+    #png("./samplevars4.png")
+    #plot(density(vars), main="Distribution of Sample Variances", xlab="Variance", ylab="Density")
+    #dev.off()
+    #print("Sample variance:", quote=F)
+    #print(mean(vars))
+    return(means)
 }
 
-randomSample(100, 10)
+#randomSample(100, 40)
 
+#######################
+#####  STEP 3
+#######################
 
+# Part 1
+normal10 <- rnorm(100, mean=popMean, sd=sqrt(popVar / 30))
+actual10 <- randomSample(100, 30)
+
+png("./qq30.png")
+qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 30)", xlab="Normal Distribution", ylab="Distance Distribution")
+dev.off()
 
 
 
