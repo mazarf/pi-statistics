@@ -31,8 +31,9 @@ print(n)
 
 # End text file processing.
 
-
-# Step 1: I choose the digit 1
+##############################
+# STEP 1: I choose the digit 1
+##############################
 
 findDistances <- function(n, y, len) {
     distances <- vector()
@@ -72,7 +73,9 @@ print(popMean)
 print("Population variance:", quote=F)
 print(popVar)
 
-# Step 2: Randomly Do X experiments of size N, record the sample mean and var
+##################################
+# STEP 2: Randomly Do X experiments of size N, record the sample mean and var
+##################################
 
 # helper, returns a random number between 1 and the size of 'distances'
 pickone <- function() {
@@ -107,16 +110,30 @@ randomSample <- function(Nne, Nss) {
 #randomSample(100, 40)
 
 #######################
-#####  STEP 3
+#####  STEP 3 : CLT
 #######################
 
-# Part 1
+# Part 1-2
 normal10 <- rnorm(100, mean=popMean, sd=sqrt(popVar / 30))
 actual10 <- randomSample(100, 30)
 
-png("./qq30.png")
-qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 30)", xlab="Normal Distribution", ylab="Distance Distribution")
-dev.off()
+#png("./qq30.png")
+#qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 30)", xlab="Normal Distribution", ylab="Distance Distribution")
+#dev.off()
+
+###################################
+#####  STEP 4: Confidence Intervals
+###################################
+
+# This is purely analytical, see the included writeup.
+
+##########################################
+#####  STEP 5: Correlation of Sample Means
+##########################################
+
+##########################
+#####  STEP 6: The Digit 9
+##########################
 
 
 
