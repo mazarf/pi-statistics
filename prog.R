@@ -17,7 +17,7 @@ close(connecter)
 
 # join all digits
 # number of pi digits considered
-pidigits <- 20000  # twenty thousand, not two hundred thousand!
+pidigits <- 200000  # two hundred thousand!
 y <- ""  # string containing first 20000 digits (excluding 3)
 j <- 2   # skip "3."
 
@@ -52,16 +52,97 @@ findDistances <- function(n, y, len) {
     return(distances)
 } # findDistances
 
-distances <- findDistances(1, y, n)
+# Finds distances of all digits. VERY SLOW. Expect to wait 10-15 
+# min if you don't have  the distance files already
+if(file.exists("distances.txt")) {
+    distances <- scan(file="distances.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances <- findDistances(1, y, n) # SLOW the first time. Give it a minute.
+    write(distances, file="distances.txt")
+}
 
-# scatter
-#png("./plot1.png")
-#plot(table(distances), main="Distances Between 1\'s in Pi", xlab="Distance", ylab="Frequency")
-#dev.off()
+if(file.exists("distances9.txt")) {
+    distances9 <- scan(file="distances9.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances9 <- findDistances(9, y, n) # SLOW the first time. Give it a minute.
+    write(distances9, file="distances9.txt")
+}
+
+if(file.exists("distances8.txt")) {
+    distances8 <- scan(file="distances8.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances8 <- findDistances(8, y, n) # SLOW the first time. Give it a minute.
+    write(distances8, file="distances8.txt")
+}
+
+if(file.exists("distances7.txt")) {
+    distances7 <- scan(file="distances7.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances7 <- findDistances(7, y, n) # SLOW the first time. Give it a minute.
+    write(distances7, file="distances7.txt")
+}
+
+if(file.exists("distances6.txt")) {
+    distances6 <- scan(file="distances6.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances6 <- findDistances(6, y, n) # SLOW the first time. Give it a minute.
+    write(distances6, file="distances6.txt")
+}
+
+if(file.exists("distances5.txt")) {
+    distances5 <- scan(file="distances5.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances5 <- findDistances(5, y, n) # SLOW the first time. Give it a minute.
+    write(distances5, file="distances5.txt")
+}
+
+if(file.exists("distances4.txt")) {
+    distances4 <- scan(file="distances4.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances4 <- findDistances(4, y, n) # SLOW the first time. Give it a minute.
+    write(distances4, file="distances4.txt")
+}
+
+if(file.exists("distances3.txt")) {
+    distances3 <- scan(file="distances3.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances3 <- findDistances(3, y, n) # SLOW the first time. Give it a minute.
+    write(distances3, file="distances3.txt")
+}
+
+if(file.exists("distances2.txt")) {
+    distances2 <- scan(file="distances2.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances2 <- findDistances(2, y, n) # SLOW the first time. Give it a minute.
+    write(distances2, file="distances2.txt")
+}
+
+if(file.exists("distances0.txt")) {
+    distances0 <- scan(file="distances0.txt")
+} else {
+    print("Computing distances from scratch. Give it a minute.", quote=F)
+    distances0 <- findDistances(0, y, n) # SLOW the first time. Give it a minute.
+    write(distances0, file="distances0.txt")
+}
+
+# end find distances
+
+png("./plot1.png")
+plot(distances, main="Distances Between 1\'s in Pi", xlab="Index", ylab="Frequency")
+dev.off()
 # box and whisker
-#png("./plot2.png")
-#boxplot(distances, main="Distances Between 1\'s in Pi", xlab="", ylab="Distance")
-#dev.off()
+png("./plot2.png")
+boxplot(distances, main="Distances Between 1\'s in Pi", xlab="", ylab="Distance")
+dev.off()
 # quantile
 print("Quantile Values:", quote=F)
 print(quantile(distances))
@@ -74,7 +155,7 @@ print("Population variance:", quote=F)
 print(popVar)
 
 ##################################
-# STEP 2: Randomly Do X experiments of size N, record the sample mean and var
+# STEP 2: Randomly Do X experiments of size N, record sample mean and var
 ##################################
 
 # helper, returns a random number between 1 and the size of 'distances'
@@ -82,7 +163,7 @@ pickone <- function() {
     return(floor(runif(1) * length(distances)) + 1)
 }
 
-randomSample <- function(Nne, Nss) {
+randomSample <- function(Nne, Nss, file1="NULL", file2="NULL") {
     means <- vector() # holds results
     vars <- vector()
 
@@ -95,31 +176,44 @@ randomSample <- function(Nne, Nss) {
         means <- c(means, mean(result))
         vars <- c(vars, var(result))
     } # all samples
-    #print("Sample mean", quote=F)
-    #print(mean(means))
-    #png("./samplemeans4.png")
-    #plot(density(means), main="Distribution of Sample Means", xlab="Mean", ylab="Density")
-    #png("./samplevars4.png")
-    #plot(density(vars), main="Distribution of Sample Variances", xlab="Variance", ylab="Density")
-    #dev.off()
-    #print("Sample variance:", quote=F)
-    #print(mean(vars))
-    return(means)
+    if(file1 != "NULL"  && file2 != "NULL") { # for Step 2
+        png(file1)
+        plot(density(means), main="Distribution of Sample Means", xlab="Mean", ylab="Density")
+        png(file2)
+        plot(density(vars), main="Distribution of Sample Variances", xlab="Variance", ylab="Density")
+        dev.off()
+        return()
+    }
+    return(means) # for Step 3
 }
 
-#randomSample(100, 40)
+randomSample(100, 10, file1="./samplemeans1.png", file2="./samplevars1.png")
+randomSample(100, 20, file1="./samplemeans2.png", file2="./samplevars2.png")
+randomSample(100, 30, file1="./samplemeans3.png", file2="./samplevars3.png")
+randomSample(100, 40, file1="./samplemeans4.png", file2="./samplevars4.png")
 
 #######################
 #####  STEP 3 : CLT
 #######################
 
 # Part 1-2
+normal10 <- rnorm(100, mean=popMean, sd=sqrt(popVar / 10))
+actual10 <- randomSample(100, 10)
+png("./qq10.png")
+qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 10)", xlab="Normal Distribution", ylab="Distance Distribution")
+dev.off()
+
 normal10 <- rnorm(100, mean=popMean, sd=sqrt(popVar / 30))
 actual10 <- randomSample(100, 30)
+png("./qq30.png")
+qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 30)", xlab="Normal Distribution", ylab="Distance Distribution")
+dev.off()
 
-#png("./qq30.png")
-#qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 30)", xlab="Normal Distribution", ylab="Distance Distribution")
-#dev.off()
+normal10 <- rnorm(100, mean=popMean, sd=sqrt(popVar / 50))
+actual10 <- randomSample(100, 50)
+png("./qq50.png")
+qqplot(x=actual10, y=normal10, main="Distance Dist. vs. Norm. Dist.(Nss = 50)", xlab="Normal Distribution", ylab="Distance Distribution")
+dev.off()
 
 ###################################
 #####  STEP 4: Confidence Intervals
@@ -131,6 +225,7 @@ actual10 <- randomSample(100, 30)
 #####  STEP 5: Correlation of Sample Means
 ##########################################
 
+
 ##########################
 #####  STEP 6: The Digit 9
 ##########################
@@ -138,11 +233,4 @@ actual10 <- randomSample(100, 30)
 
 
 
-
-
-
-
-
-
-
-
+print("All good!  The plots should be in the working directory", quote=F)
