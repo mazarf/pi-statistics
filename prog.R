@@ -159,19 +159,19 @@ print(popVar)
 ##################################
 
 # helper, returns a random number between 1 and the size of 'distances'
-pickone <- function() {
-    return(floor(runif(1) * length(distances)) + 1)
-}
+#pickone <- function() {
+#    return(floor(runif(1) * length(theDistances)) + 1)
+#}
 
-randomSample <- function(Nne, Nss, file1="NULL", file2="NULL") {
+randomSample <- function(Nne, Nss, file1="NULL", file2="NULL", theDistances=distances) {
     means <- vector() # holds results
     vars <- vector()
 
     for(sample in 1:Nne) {
         result <- vector()
         for(trial in 1:Nss) {
-            choice <- pickone()
-            result <- c(result, distances[[choice]])
+            choice <- floor(runif(1) * length(theDistances)) + 1
+            result <- c(result, theDistances[[choice]])
         } # all trials
         means <- c(means, mean(result))
         vars <- c(vars, var(result))
@@ -225,12 +225,89 @@ dev.off()
 #####  STEP 5: Correlation of Sample Means
 ##########################################
 
+# first compute all sample and pop means
+p0 <- mean(distances0)
+p1 <- mean(distances)
+p2 <- mean(distances2)
+p3 <- mean(distances3)
+p4 <- mean(distances4)
+p5 <- mean(distances5)
+p6 <- mean(distances6)
+p7 <- mean(distances7)
+p8 <- mean(distances8)
+p9 <- mean(distances9)
+popmeans <- c(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9)
+
+s0 <- randomSample(Nne=1, Nss=30, theDistances=distances0)
+s1 <- randomSample(Nne=1, Nss=30)
+s2 <- randomSample(Nne=1, Nss=30, theDistances=distances2)
+s3 <- randomSample(Nne=1, Nss=30, theDistances=distances3)
+s4 <- randomSample(Nne=1, Nss=30, theDistances=distances4)
+s5 <- randomSample(Nne=1, Nss=30, theDistances=distances5)
+s6 <- randomSample(Nne=1, Nss=30, theDistances=distances6)
+s7 <- randomSample(Nne=1, Nss=30, theDistances=distances7)
+s8 <- randomSample(Nne=1, Nss=30, theDistances=distances8)
+s9 <- randomSample(Nne=1, Nss=30, theDistances=distances9)
+sampmeans <- c(s0, s1, s2, s3, s4, s5, s6, s7, s8, s9)
+
+fit <- lm(sampmeans ~ c(0:9))
+
+# plot them both
+png("allpopmeans.png")
+plot(popmeans, main="Population means for the digits 0-9", ylab="Mean distance")
+png("allsampmeans.png")
+plot(sampmeans, main="Sample means for the digits 0-9", ylab="Mean distance")
+abline(a=fit$coefficients[[1]], b=fit$coefficients[[2]])
+dev.off()
+
+print("Correlation between digit and mean distance", quote=F)
+print(cor(sampmeans, c(0:9)))
 
 ##########################
 #####  STEP 6: The Digit 9
 ##########################
 
+sampleNines <- function() {
+    total <- 0
+    for(i in 1:100) {
+        choose <- floor(runif(1) * nchar(y)) + 1
+        if(substr(y, choose, choose) == as.character(9)) {
+            total <- total + 1
+        }
+    }
+    return(total / 100)
+}
 
+popNines <- function() {
+    max <- floor(nchar(y)/100) - 1
+    result <- vector()
+    occurrences <- 0
+    for(i in 1:max) {
+        front <- i * 100
+        back <- front - 100 + 1
+        for(j in back:front)
+        {
+            if(substr(y, j, j) == as.character(9)) {
+                occurrences <- occurrences + 1
+            }
+        }
+        result <- c(result, occurrences)
+        occurrences <- 0
+    }
+    return(result)
+}
 
+poissonnines <- rpois(100, (1/sampleNines()))
+png("poisson.png")
+hist(poissonnines, main="Poisson Estimation of distribution of nines")
+dev.off()
+
+popnines <- popNines()
+png("consecutive.png")
+hist(popnines, main="Actual distribution of 9s")
+dev.off()
+
+png("qqnine.png")
+qqplot(x=poissonnines, y=popnines, main="Pois Dist of 9 vs. Population Dist.", xlab="Poisson Distribution", ylab="Occurrence Distribution")
 
 print("All good!  The plots should be in the working directory", quote=F)
